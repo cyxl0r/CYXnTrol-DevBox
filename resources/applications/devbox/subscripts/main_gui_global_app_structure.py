@@ -27,6 +27,7 @@ from subscripts.main_gui_global_app_structure_store import (
     load_template_paths,
     make_row,
     sanitize_folder_name,
+    run_empty_project_initializer,
     save_template_rows,
     split_path,
 )
@@ -285,7 +286,25 @@ class GlobalAppFolderStructureForm(QFrame):
     def save_tree(self) -> None:
         try:
             save_template_rows(self.database_file, self.collect_rows())
+            initializer_code = run_empty_project_initializer(
+                self.project_root_path
+            )
         except Exception as exc:
             QMessageBox.warning(self, "Fehler", str(exc))
             return
-        QMessageBox.information(self, "Gespeichert", "Vorlage wurde gespeichert.")
+
+        if initializer_code != 0:
+            QMessageBox.warning(
+                self,
+                "Vorlage gespeichert",
+                "Die Vorlage wurde gespeichert, aber die Initialisierung "
+                f"leerer Projektordner ist fehlgeschlagen. Code: {initializer_code}",
+            )
+            return
+
+        QMessageBox.information(
+            self,
+            "Gespeichert",
+            "Vorlage wurde gespeichert. Vollständig leere Projektordner "
+            "wurden einmalig initialisiert.",
+        )

@@ -37,6 +37,7 @@ except Exception as exc:
     raise SystemExit(1)
 
 from subscripts.main_gui_config import PAGE_KEYS, PROGRAM_NAME, TAB_KEYS, WORKSHOP_PROFILES
+from subscripts.main_gui_desknode_page import build_desknode_page
 from subscripts.main_gui_pages import build_document_page, build_eventlab_page, build_profile_page, build_repository_page
 from subscripts.main_gui_platform_page import build_platform_page
 from subscripts.main_gui_manufacturer_setup_store import (
@@ -181,6 +182,7 @@ class DevBoxGuiIsolatedWindow(QMainWindow):
         self.tabs.setObjectName("MainTabs")
         self.tabs.currentChanged.connect(self.tab_changed)
         self.tabs.addTab(build_platform_page(self), "Entwicklungsplattform")
+        self.tabs.addTab(build_desknode_page(self), "deskNode")
         self.tabs.addTab(
             build_profile_page(
                 self,
@@ -204,8 +206,20 @@ class DevBoxGuiIsolatedWindow(QMainWindow):
         if self.structure_panel is not None:
             self.structure_navigation_width = self.structure_panel.compact_width_hint()
         for key in PAGE_KEYS:
+            if key == "desknode":
+                self.set_status("deskNode-Ausführung bereit.", "neutral", key)
+                self.append_log(
+                    "deskNode-Tab bereit. Die Buttons starten den lokalen "
+                    "supervisor.py-Prozess mit deskNode oder daemon.",
+                    key,
+                )
+                continue
+
             self.set_status("GUI isoliert", "neutral", key)
-            self.append_log("DevBox-GUI läuft als reine Vorschau ohne Backend-Funktionen.", key)
+            self.append_log(
+                "DevBox-GUI läuft als reine Vorschau ohne Backend-Funktionen.",
+                key,
+            )
 
     def open_repository_page(self) -> None:
         """Activate the last main-GUI page used for repository maintenance."""

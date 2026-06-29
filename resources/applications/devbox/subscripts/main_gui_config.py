@@ -37,5 +37,5 @@ COLOR_LIVE_ON = "#23ead7"
 COLOR_LIVE_OFF = "#ff4365"
 COLOR_PENDING = "#f4ff5b"
 
-PAGE_KEYS = ["workshop", "documents", "eventlab", "repositories"]
+PAGE_KEYS = ["desknode", "workshop", "documents", "eventlab", "repositories"]
 TAB_KEYS = ["platform", *PAGE_KEYS]

@@ -30,6 +30,52 @@ def style_sheet() -> str:
         QPushButton:hover { background: rgba(8, 18, 24, 205); }
         QPushButton#SnapshotButton { background: rgba(4, 10, 14, 180); color: #ffffff; border: 1px solid rgba(37, 234, 215, 215); }
         QPushButton#SnapshotButton:hover { background: rgba(8, 18, 24, 210); border: 1px solid rgba(109, 255, 244, 230); }
+        QPushButton#DeskNodeExecuteButton { min-height: 42px; background: rgba(0, 130, 160, 170); color: #ffffff; border: 1px solid #00e4ff; padding-left: 16px; padding-right: 16px; }
+        QPushButton#DeskNodeExecuteButton:hover { background: rgba(0, 165, 190, 205); border: 1px solid rgba(119, 255, 247, 245); }
+        QPushButton#DeskNodeExecuteButton[running="true"] { background: rgba(153, 23, 35, 205); color: #ffffff; border: 1px solid rgba(255, 93, 109, 245); }
+        QPushButton#DeskNodeExecuteButton[running="true"]:hover { background: rgba(192, 31, 45, 225); border: 1px solid rgba(255, 171, 180, 250); }
+        QPushButton#DeskNodeExecuteButton:disabled { background: rgba(3, 6, 8, 140); color: #556972; border: 1px solid rgba(44, 62, 70, 150); }
+        QPushButton#DeskNodeVersionButton { min-height: 42px; background: rgba(4, 25, 34, 185); color: #ffffff; border: 1px solid rgba(78, 196, 255, 215); padding-left: 16px; padding-right: 16px; }
+        QPushButton#DeskNodeVersionButton:hover { background: rgba(0, 109, 148, 195); border: 1px solid rgba(142, 238, 255, 245); }
+        QPushButton#DeskNodeVersionButton:disabled { background: rgba(3, 6, 8, 140); color: #556972; border: 1px solid rgba(44, 62, 70, 150); }
+        QPushButton#DeskNodeUxDesignButton { min-height: 42px; background: rgba(45, 22, 90, 185); color: #ffffff; border: 1px solid rgba(174, 111, 255, 220); padding-left: 16px; padding-right: 16px; }
+        QPushButton#DeskNodeUxDesignButton:hover { background: rgba(79, 33, 145, 215); border: 1px solid rgba(218, 178, 255, 245); }
+        QPushButton#DeskNodeGraphicPackButton { min-height: 42px; background: rgba(22, 80, 46, 190); color: #ffffff; border: 1px solid rgba(105, 238, 160, 220); padding-left: 16px; padding-right: 16px; }
+        QPushButton#DeskNodeGraphicPackButton:hover { background: rgba(30, 125, 70, 210); border: 1px solid rgba(168, 255, 203, 245); }
+        QPushButton#DeskNodeGraphicPackButton[running="true"] { background: rgba(132, 88, 8, 205); color: #ffffff; border: 1px solid rgba(255, 208, 88, 240); }
+        QPushButton#DeskNodeGraphicPackButton:disabled { color: #d9e9df; }
+        QPushButton#DeskNodeSymbolManagementButton { min-height: 42px; background: rgba(0, 130, 160, 170); color: #ffffff; border: 1px solid #00e4ff; padding-left: 16px; padding-right: 16px; }
+        QPushButton#DeskNodeSymbolManagementButton:hover { background: rgba(0, 165, 190, 205); border: 1px solid rgba(119, 255, 247, 245); }
+        QPushButton#DeskNodeSymbolBackButton { min-height: 38px; background: rgba(4, 25, 34, 185); color: #ffffff; border: 1px solid rgba(78, 196, 255, 215); padding-left: 14px; padding-right: 14px; }
+        QPushButton#DeskNodeSymbolBackButton:hover { background: rgba(0, 109, 148, 195); border: 1px solid rgba(142, 238, 255, 245); }
+        QLabel#DeskNodeSymbolTitle { color: #ffffff; font-size: 13pt; font-weight: 800; }
+        QLabel#DeskNodeSymbolNotice { color: #b8d5dd; background: rgba(0, 0, 0, 110); border: 1px solid rgba(46, 213, 209, 85); border-radius: 7px; padding: 7px; }
+        QFrame#DeskNodeSymbolPanel { background: rgba(3, 10, 14, 145); border: 1px solid rgba(52, 182, 202, 125); border-radius: 10px; }
+        QLabel#DeskNodeSymbolPanelTitle { color: #ffffff; font-size: 12pt; font-weight: 800; }
+        QLabel#DeskNodeSymbolPanelDescription { color: #b8d5dd; }
+        QComboBox#DeskNodeSymbolRecordCombo, QComboBox#DeskNodeSymbolCategoryCombo, QLineEdit#DeskNodeSymbolInput { min-height: 29px; background: rgba(0, 0, 0, 158); color: #edf7ff; border: 1px solid rgba(46, 213, 209, 120); border-radius: 7px; padding: 4px 7px; }
+        QComboBox#DeskNodeSymbolRecordCombo:hover, QComboBox#DeskNodeSymbolCategoryCombo:hover, QLineEdit#DeskNodeSymbolInput:hover { border-color: rgba(109, 255, 244, 220); }
+        QComboBox#DeskNodeSymbolRecordCombo QAbstractItemView, QComboBox#DeskNodeSymbolCategoryCombo QAbstractItemView { background: #071017; color: #edf7ff; selection-background-color: rgba(0, 145, 170, 170); border: 1px solid rgba(46, 213, 209, 120); }
+        QPushButton#DeskNodeSymbolActionButton, QPushButton#DeskNodeSymbolDangerButton { min-width: 37px; min-height: 32px; font-size: 13pt; font-weight: 800; }
+        QPushButton#DeskNodeSymbolActionButton { background: rgba(4, 25, 34, 185); color: #ffffff; border: 1px solid rgba(78, 196, 255, 215); border-radius: 8px; }
+        QPushButton#DeskNodeSymbolActionButton:hover { background: rgba(0, 109, 148, 195); border-color: rgba(142, 238, 255, 245); }
+        QPushButton#DeskNodeSymbolDangerButton { background: rgba(70, 18, 28, 180); color: #ffffff; border: 1px solid rgba(232, 83, 103, 210); border-radius: 8px; }
+        QPushButton#DeskNodeSymbolDangerButton:hover { background: rgba(128, 29, 43, 215); border-color: rgba(255, 159, 171, 245); }
+        QFrame#DeskNodeSymbolPngDrop { background: rgba(0, 0, 0, 115); border: 2px dashed rgba(46, 213, 209, 135); border-radius: 9px; }
+        QFrame#DeskNodeSymbolPngDrop:hover { background: rgba(0, 115, 145, 60); border-color: rgba(109, 255, 244, 220); }
+        QFrame#DeskNodeSymbolPngDrop[has_file="true"] { background: rgba(8, 76, 67, 105); border-color: rgba(105, 238, 160, 220); }
+        QFrame#DeskNodeSymbolPngDrop[invalid="true"] { background: rgba(104, 18, 31, 105); border-color: rgba(255, 93, 109, 240); }
+        QLabel#DeskNodeSymbolPngDropTitle { color: #edf7ff; font-weight: 800; }
+        QLabel#DeskNodeSymbolPngDropDetail, QLabel#DeskNodeSymbolPngHint { color: #9ec1cb; }
+        QPushButton#DeskNodeUxBackButton { min-height: 38px; background: rgba(4, 25, 34, 185); color: #ffffff; border: 1px solid rgba(78, 196, 255, 215); padding-left: 14px; padding-right: 14px; }
+        QPushButton#DeskNodeUxBackButton:hover { background: rgba(0, 109, 148, 195); border: 1px solid rgba(142, 238, 255, 245); }
+        QFrame#DeskNodeVersionPanel { background: rgba(3, 10, 14, 145); border: 1px solid rgba(52, 182, 202, 125); border-radius: 8px; }
+        QLineEdit#DeskNodeVersionInput { min-height: 32px; background: rgba(1, 7, 11, 205); color: #eef8ff; border: 1px solid rgba(40, 173, 198, 165); border-radius: 7px; padding: 4px 9px; }
+        QLineEdit#DeskNodeVersionInput:focus { border-color: #00e4ff; }
+        QLineEdit#DeskNodeVersionInput:disabled { color: #6f8992; border-color: rgba(44, 62, 70, 150); }
+        QPushButton#DeskNodeVersionSaveButton { min-height: 36px; background: rgba(0, 103, 138, 195); color: #ffffff; border: 1px solid rgba(50, 235, 231, 225); padding-left: 14px; padding-right: 14px; }
+        QPushButton#DeskNodeVersionSaveButton:hover { background: rgba(0, 135, 168, 220); border: 1px solid rgba(113, 249, 255, 240); }
+        QPushButton#DeskNodeVersionSaveButton:disabled { background: rgba(3, 6, 8, 140); color: #556972; border: 1px solid rgba(44, 62, 70, 150); }
         QPushButton#DocSnapshotButton { background: rgba(4, 10, 14, 180); color: #ffffff; border: 1px solid rgba(73, 175, 255, 210); min-width: 120px; }
         QPushButton#DocSnapshotButton:hover { background: rgba(8, 18, 24, 210); border: 1px solid rgba(123, 211, 255, 230); }
         QPushButton#ImplementButton { background: rgba(6, 10, 12, 180); color: #ffffff; border: 1px solid rgba(243, 255, 88, 225); }
@@ -115,4 +161,22 @@ def style_sheet() -> str:
         QFrame#RepositoryImageDropBox:disabled { background: rgba(0, 0, 0, 70); border: 2px dashed rgba(41, 71, 81, 140); }
         QLabel#RepositoryImageCrosshair { color: #72c7ff; font-size: 28pt; font-weight: 900; background: transparent; }
         QScrollArea { background: rgba(0, 0, 0, 72); border: 1px solid rgba(45, 187, 204, 90); border-radius: 8px; }
+        QLabel#DeskNodeUxTitle { color: #ffffff; font-size: 13pt; font-weight: 800; }
+        QLabel#DeskNodeUxNotice { color: #b8d5dd; background: rgba(0, 0, 0, 110); border: 1px solid rgba(46, 213, 209, 85); border-radius: 7px; padding: 7px; }
+        QLabel#DeskNodeUxHint { color: #9ec1cb; }
+        QPushButton#DeskNodeUxActionButton { min-height: 34px; background: rgba(4, 25, 34, 185); color: #ffffff; border: 1px solid rgba(78, 196, 255, 215); border-radius: 8px; padding-left: 12px; padding-right: 12px; }
+        QPushButton#DeskNodeUxActionButton:hover { background: rgba(0, 109, 148, 195); border-color: rgba(142, 238, 255, 245); }
+        QPushButton#DeskNodeUxSaveButton { min-height: 34px; background: rgba(0, 130, 160, 170); color: #ffffff; border: 1px solid #00e4ff; border-radius: 8px; padding-left: 14px; padding-right: 14px; font-weight: 800; }
+        QPushButton#DeskNodeUxSaveButton:hover { background: rgba(0, 165, 190, 205); border-color: rgba(119, 255, 247, 245); }
+        QTabWidget#DeskNodeUxTabs::pane { border: 1px solid rgba(45, 187, 204, 105); border-radius: 8px; background: rgba(3, 10, 14, 115); }
+        QTabBar::tab { min-height: 28px; }
+        QGroupBox#DeskNodeUxFontGroup { color: #d9f0f7; border: 1px solid rgba(45, 187, 204, 105); border-radius: 8px; margin-top: 10px; padding: 10px; font-weight: 700; }
+        QGroupBox#DeskNodeUxFontGroup::title { subcontrol-origin: margin; left: 10px; padding: 0 4px; }
+        QLineEdit#DeskNodeUxColorInput { min-height: 28px; background: rgba(0, 0, 0, 165); color: #edf7ff; border: 1px solid rgba(46, 213, 209, 115); border-radius: 6px; padding: 3px 7px; font-family: Consolas, monospace; }
+        QLineEdit#DeskNodeUxColorInput[invalid_rgba="true"] { color: #ffc2c7; border: 1px solid rgba(255, 93, 109, 245); }
+        QFrame#DeskNodeUxColorPreview { border: 1px solid rgba(228, 248, 255, 180); border-radius: 4px; }
+        QComboBox#DeskNodeUxFontCombo, QComboBox#DeskNodeUxThemeCombo, QSpinBox#DeskNodeUxNumberInput { min-height: 28px; background: rgba(0, 0, 0, 150); color: #edf7ff; border: 1px solid rgba(46, 213, 209, 120); border-radius: 6px; padding: 3px 7px; }
+        QComboBox#DeskNodeUxFontCombo:hover, QComboBox#DeskNodeUxThemeCombo:hover, QSpinBox#DeskNodeUxNumberInput:hover { border-color: rgba(109, 255, 244, 220); }
+        QScrollArea#DeskNodeUxScroll { background: rgba(0, 0, 0, 72); border: 1px solid rgba(45, 187, 204, 90); border-radius: 8px; }
+        QFrame#DeskNodeUxPreview { min-width: 330px; background: rgba(3, 10, 14, 145); border: 1px solid rgba(52, 182, 202, 125); border-radius: 10px; }
     """

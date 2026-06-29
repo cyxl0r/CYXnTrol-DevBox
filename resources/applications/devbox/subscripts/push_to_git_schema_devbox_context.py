@@ -87,6 +87,73 @@ def find_project_root(start_path: Path) -> Path:
         current_path = current_path.parent
 
 
+def _get_publish_workspace_base() -> Path:
+    configured_base = os.environ.get(
+        "CYXLABS_DEVBOX_PUBLISH_TEMP_ROOT",
+        "",
+    ).strip()
+
+    if configured_base:
+        workspace_base = Path(configured_base).expanduser()
+    else:
+        system_temp_path = Path(tempfile.gettempdir()).resolve()
+        workspace_base = Path(system_temp_path.anchor) / "cyx"
+
+    try:
+        workspace_base.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+    except OSError as error:
+        raise RuntimeError(
+            "Could not create the short DevBox publish workspace base: "
+            f"{workspace_base}"
+        ) from error
+
+    return workspace_base.resolve()
+
+
+def _create_short_publish_workspace(
+    workspace_base: Path,
+    timestamp: str,
+    random_provider,
+) -> Path:
+    compact_timestamp = "".join(
+        character
+        for character in timestamp
+        if character.isalnum()
+    )[-14:]
+
+    for _attempt in range(32):
+        random_part = random_provider.generate_string(
+            length=12,
+            variant=1,
+        )
+        workspace_path = workspace_base / (
+            f"p_{compact_timestamp}_{random_part}"
+        )
+
+        try:
+            workspace_path.mkdir(
+                parents=False,
+                exist_ok=False,
+            )
+            return workspace_path
+
+        except FileExistsError:
+            continue
+
+        except OSError as error:
+            raise RuntimeError(
+                "Could not create the short DevBox publish workspace: "
+                f"{workspace_path}"
+            ) from error
+
+    raise RuntimeError(
+        "Could not allocate a unique short DevBox publish workspace."
+    )
+
+
 def build_context(request: PushRequest) -> PushContext:
     project_root = find_project_root(Path(__file__).resolve())
     tools_path = project_root / "platform" / "tools"
@@ -99,11 +166,12 @@ def build_context(request: PushRequest) -> PushContext:
         tools_path / "timestamp_provider.py",
     )
     timestamp = timestamp_provider.generate_combined_timestamp([4, 14])
-    random_string = random_provider.generate_string(length=64, variant=1)
-    temp_path = Path(tempfile.gettempdir()) / (
-        f"_push_to_git_schema_devbox_{timestamp}_{random_string}"
+    workspace_base = _get_publish_workspace_base()
+    temp_path = _create_short_publish_workspace(
+        workspace_base=workspace_base,
+        timestamp=timestamp,
+        random_provider=random_provider,
     )
-    temp_path.mkdir(parents=True, exist_ok=False)
     root_dir = temp_path / "root_dir"
     assets_path = root_dir / "assets"
     return PushContext(

@@ -17,14 +17,48 @@ class GitResult:
     pushed: bool
 
 
-def _git(arguments: list[str], cwd: Path | None, reporter, check: bool = True) -> subprocess.CompletedProcess[str]:
-    command = ["git", *arguments]
-    reporter.info("Git command.", " ".join(command))
-    result = subprocess.run(command, cwd=str(cwd) if cwd else None, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    if result.stdout.strip():
-        reporter.info("Git output.", result.stdout.strip())
+def _git(
+    arguments: list[str],
+    cwd: Path | None,
+    reporter,
+    check: bool = True,
+) -> subprocess.CompletedProcess[str]:
+    command = [
+        "git",
+        "-c",
+        "i18n.logOutputEncoding=utf-8",
+        *arguments,
+    ]
+
+    reporter.info(
+        "Git command.",
+        " ".join(command),
+    )
+
+    result = subprocess.run(
+        command,
+        cwd=str(cwd) if cwd else None,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+
+    output = result.stdout.strip()
+
+    if output:
+        reporter.info(
+            "Git output.",
+            output,
+        )
+
     if check and result.returncode != 0:
-        raise RuntimeError(f"Git command failed ({result.returncode}): {' '.join(command)}")
+        raise RuntimeError(
+            "Git command failed "
+            f"({result.returncode}): {' '.join(command)}"
+        )
+
     return result
 
 
@@ -36,9 +70,18 @@ def _require_git() -> None:
 def _ensure_author_identity(workspace: Path) -> None:
     def configured_value(key: str) -> str:
         result = subprocess.run(
-            ["git", "config", "--get", key],
+            [
+                "git",
+                "-c",
+                "i18n.logOutputEncoding=utf-8",
+                "config",
+                "--get",
+                key,
+            ],
             cwd=str(workspace),
             text=True,
+            encoding="utf-8",
+            errors="replace",
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
         )
@@ -95,7 +138,27 @@ def _copy_publish_root(root_dir: Path, workspace: Path) -> None:
 
 def _has_staged_changes(workspace: Path, reporter) -> bool:
     _git(["add", "--all"], workspace, reporter)
-    return _git(["diff", "--cached", "--quiet"], workspace, reporter, check=False).returncode != 0
+    return _git(
+        ["diff", "--cached", "--quiet"],
+        workspace,
+        reporter,
+        check=False,
+    ).returncode != 0
+
+
+def _write_commit_message_file(
+    workspace: Path,
+    commit_text: str,
+) -> Path:
+    message_file = workspace / ".git" / "devbox_commit_message.txt"
+
+    message_file.write_text(
+        commit_text,
+        encoding="utf-8",
+        newline="\n",
+    )
+
+    return message_file
 
 
 def sync_and_push(
@@ -116,6 +179,30 @@ def sync_and_push(
         reporter.info("Repository has no content changes.")
         return GitResult(pushed=False)
     message = commit_text.strip() or "Update DevBox repository"
-    _git(["commit", "-m", message], repository_workspace, reporter)
-    _git(["push", "-u", "origin", repository_branch or "main"], repository_workspace, reporter)
+    message_file = _write_commit_message_file(
+        workspace=repository_workspace,
+        commit_text=message,
+    )
+
+    try:
+        _git(
+            [
+                "-c",
+                "i18n.commitEncoding=utf-8",
+                "commit",
+                "-F",
+                str(message_file),
+            ],
+            repository_workspace,
+            reporter,
+        )
+    finally:
+        message_file.unlink(missing_ok=True)
+
+    _git(
+        ["push", "-u", "origin", repository_branch or "main"],
+        repository_workspace,
+        reporter,
+    )
+
     return GitResult(pushed=True)

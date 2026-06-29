@@ -24,29 +24,22 @@ while True:
 
     if parent_path == current_path:
         print("No project root found.")
-        sys.exit(0)
+        sys.exit(1)
 
     current_path = parent_path
     os.chdir(current_path)
 
 
-create_devdbase_file = (
+functions_path = (
     projekt_root_path
     / "resources"
     / "applications"
     / "devbox"
     / "functions"
-    / "create_devdbase.py"
 )
 
-folder_builder_file = (
-    projekt_root_path
-    / "resources"
-    / "applications"
-    / "devbox"
-    / "functions"
-    / "folder_builder.py"
-)
+create_devdbase_file = functions_path / "create_devdbase.py"
+initializer_file = functions_path / "initialize_empty_application_projects.py"
 
 
 def get_python_executable() -> Path:
@@ -66,40 +59,34 @@ def run_script(script_file: Path) -> int:
         print(f"Script not found: {script_file}")
         return 1
 
-    python_executable = get_python_executable()
-
     print(f"Running: {script_file}")
 
     process = subprocess.run(
-        [
-            str(python_executable),
-            str(script_file),
-        ],
+        [str(get_python_executable()), str(script_file)],
         cwd=str(script_file.parent),
     )
 
     print(f"Finished: {script_file}")
     print(f"Return code: {process.returncode}")
-
     return int(process.returncode)
 
 
 def main() -> int:
     print(f"projekt_root_path: {projekt_root_path}")
 
-    first_return_code = run_script(create_devdbase_file)
+    database_return_code = run_script(create_devdbase_file)
 
-    if first_return_code != 0:
-        print("create_devdbase.py failed. folder_builder.py will not be started.")
-        return first_return_code
+    if database_return_code != 0:
+        print("create_devdbase.py failed. Project initialization will not start.")
+        return database_return_code
 
-    second_return_code = run_script(folder_builder_file)
+    initializer_return_code = run_script(initializer_file)
 
-    if second_return_code != 0:
-        print("folder_builder.py failed.")
-        return second_return_code
+    if initializer_return_code != 0:
+        print("initialize_empty_application_projects.py failed.")
+        return initializer_return_code
 
-    print("DevBox database and folder structure update completed.")
+    print("DevBox database update and empty-project initialization completed.")
     return 0
 
 

@@ -6,6 +6,8 @@ LOGGER.info("Module loaded.")
 
 
 import sqlite3
+import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -44,6 +46,42 @@ def split_path(relative_path: str) -> list[str]:
 
 def database_file(project_root_path: Path) -> Path:
     return Path(project_root_path) / "resources" / "organization" / "devbox_db.r0b"
+
+
+
+def python_executable() -> Path:
+    executable_path = Path(sys.executable)
+
+    if executable_path.name.lower() == "pythonw.exe":
+        python_path = executable_path.with_name("python.exe")
+
+        if python_path.is_file():
+            return python_path
+
+    return executable_path
+
+
+def run_empty_project_initializer(project_root_path: Path) -> int:
+    script_file = (
+        Path(project_root_path)
+        / "resources"
+        / "applications"
+        / "devbox"
+        / "functions"
+        / "initialize_empty_application_projects.py"
+    )
+
+    if not script_file.is_file():
+        raise FileNotFoundError(
+            f"Project initializer not found: {script_file}"
+        )
+
+    process = subprocess.run(
+        [str(python_executable()), str(script_file)],
+        cwd=str(script_file.parent),
+    )
+
+    return int(process.returncode)
 
 
 def applications_folder_name(project_root_path: Path) -> str:

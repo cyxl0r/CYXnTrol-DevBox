@@ -1,0 +1,1 @@
+dir symbol_source_*.png /b>_x.txt

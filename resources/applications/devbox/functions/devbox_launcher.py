@@ -53,6 +53,14 @@ crt_db = (
     / "functions"
     / "create_devdbase.py"
 )
+initializer_script = (
+    projekt_root_path
+    / "resources"
+    / "applications"
+    / "devbox"
+    / "functions"
+    / "initialize_empty_application_projects.py"
+)
 
 database_file = projekt_root_path / "resources" / "organization" / "devbox_db.r0b"
 devbox_source_path = projekt_root_path / "resources" / "applications" / "devbox"
@@ -612,6 +620,26 @@ def run_create_database(
     )
 
 
+def run_empty_project_initializer(
+    logger_module: Any | None,
+) -> int:
+    script_logger = create_script_logger(logger_module, initializer_script)
+
+    if not initializer_script.is_file():
+        message = f"Project initializer not found: {initializer_script}"
+        print(message)
+        log_message(script_logger, "ERROR", message)
+        return 1
+
+    print(f"Running empty-project initializer: {initializer_script}")
+    return run_process_with_log(
+        [str(get_python_executable()), str(initializer_script)],
+        initializer_script.parent,
+        script_logger,
+        "initialize_empty_application_projects.py",
+    )
+
+
 def run_gui(
     gui_file: Path,
     logger_module: Any | None,
@@ -710,6 +738,14 @@ def main() -> int:
             print(message)
             log_message(launcher_logger, "ERROR", message)
             return 1
+
+        initializer_return_code = run_empty_project_initializer(logger_module)
+
+        if initializer_return_code != 0:
+            message = "Empty application project initialization failed. GUI will not be started."
+            print(message)
+            log_message(launcher_logger, "ERROR", message)
+            return initializer_return_code
 
         return_code = run_gui(gui_file, logger_module, logfile_path)
         log_message(
