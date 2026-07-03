@@ -23,6 +23,14 @@ def rgba_to_qss(value: str) -> str:
     return f"rgba({red}, {green}, {blue}, {alpha})"
 
 
+def rgba_to_opaque_qss(value: str) -> str:
+    normalized = str(value or "00000000").lower()
+    red = int(normalized[0:2], 16)
+    green = int(normalized[2:4], 16)
+    blue = int(normalized[4:6], 16)
+    return f"rgb({red}, {green}, {blue})"
+
+
 def font_family(studio, relative_path: str, fallback: str) -> str:
     if not relative_path:
         return fallback
@@ -92,7 +100,13 @@ def desk_node_style_sheet(
     button_disabled = rgba_to_qss(settings["button_disabled_rgba"])
     status = rgba_to_qss(settings["status_rgba"])
     log = rgba_to_qss(settings["log_rgba"])
+    structure_node = rgba_to_qss(settings["structure_node_rgba"])
+    structure_node_selected = rgba_to_qss(settings["structure_node_selected_rgba"])
+    structure_connector = rgba_to_qss(settings["structure_connector_rgba"])
     path = rgba_to_qss(settings["path_rgba"])
+    glow_on = rgba_to_qss(settings["glow_on_rgba"])
+    accent = rgba_to_qss(settings["non_off_rgba"])
+    button_text = rgba_to_qss(settings["button_font_rgba"])
 
     return f"""
         {root_selector} {{ background: {page}; }}
@@ -120,7 +134,32 @@ def desk_node_style_sheet(
         {root_selector} QLineEdit#DeskNodeVersionInput {{ {font_qss(studio, settings, 'input', 'Segoe UI') } background: {input_color}; border: {default_width}px {outline_style} {default_outline}; border-radius: {input_radius}px; padding: 4px 9px; }}
         {root_selector} QLabel#StatusPanel {{ {font_qss(studio, settings, 'status', 'Segoe UI') } background: {status}; border: {default_width}px {outline_style} {default_outline}; border-radius: {panel_radius}px; padding: 8px; }}
         {root_selector} QTextEdit#LogBox {{ {font_qss(studio, settings, 'log', 'Consolas') } background: {log}; border: {default_width}px {outline_style} {default_outline}; border-radius: {panel_radius}px; }}
-        {root_selector} QLabel#DeskNodePreviewSection {{ {font_qss(studio, settings, 'section', 'Segoe UI') } }}
+        {root_selector} QLabel#DeskNodePreviewSection {{ {font_qss(studio, settings, 'section', 'Segoe UI') } color: {accent}; }}
+        {root_selector} QFrame#DeskNodePreviewStructure {{ background: transparent; }}
+        {root_selector} QFrame#DeskNodePreviewStructureNode {{ background: {structure_node}; border: {default_width}px {outline_style} {default_outline}; border-radius: {button_radius}px; }}
+        {root_selector} QFrame#DeskNodePreviewStructureNodeSelected {{ background: {structure_node_selected}; border: {default_width}px {outline_style} {hover_outline}; border-radius: {button_radius}px; }}
+        {root_selector} QFrame#DeskNodePreviewStructureConnector {{ background: {structure_connector}; border: none; }}
+        {root_selector} QLabel#DeskNodePreviewStructureNodeLabel {{ {font_qss(studio, settings, 'body', 'Segoe UI') } padding: 0; }}
+        {root_selector} QFrame#DeskNodePreviewDevicePanel {{ background: {input_color}; border: {default_width}px {outline_style} {disabled_outline}; border-radius: {panel_radius}px; }}
+        {root_selector} QLabel#DeskNodePreviewDeviceName {{ {font_qss(studio, settings, 'headline', 'Segoe UI') } }}
+        {root_selector} QLabel#DeskNodePreviewDeviceMetric {{ {font_qss(studio, settings, 'body', 'Segoe UI') } color: {glow_on}; }}
+        {root_selector} QFrame#DeskNodePreviewDialog {{ background: {panel}; border: {default_width}px {outline_style} {default_outline}; border-radius: {panel_radius}px; }}
+        {root_selector} QLabel#DeskNodePreviewDialogTitle {{ {font_qss(studio, settings, 'headline', 'Segoe UI') } }}
+        {root_selector} QLineEdit#DeskNodePreviewInput,
+        {root_selector} QComboBox#DeskNodePreviewCombo {{ {font_qss(studio, settings, 'input', 'Segoe UI') } background: {input_color}; border: {default_width}px {outline_style} {disabled_outline}; border-radius: {input_radius}px; padding: 6px 9px; }}
+        {root_selector} QLineEdit#DeskNodePreviewInput:focus,
+        {root_selector} QComboBox#DeskNodePreviewCombo:hover,
+        {root_selector} QComboBox#DeskNodePreviewCombo:focus {{ border-color: {hover_outline}; }}
+        {root_selector} QComboBox#DeskNodePreviewCombo QAbstractItemView {{ {font_qss(studio, settings, 'input', 'Segoe UI') } background: {panel}; border: {default_width}px {outline_style} {default_outline}; selection-background-color: {button_hover}; selection-color: {button_text}; }}
+        {root_selector} QPushButton#DeskNodePreviewDialogButton {{ {font_qss(studio, settings, 'button', 'Segoe UI') } background: {button}; border: {default_width}px {outline_style} {default_outline}; border-radius: {button_radius}px; padding: 6px 10px; }}
+        {root_selector} QPushButton#DeskNodePreviewDialogButton:hover {{ background: {button_hover}; border-color: {hover_outline}; }}
+        {root_selector} QPushButton#DeskNodePreviewDialogButton:pressed {{ background: {button_pressed}; }}
+        {root_selector} QFrame#DeskNodePreviewContextMenu {{ background: {panel}; border: {default_width}px {outline_style} {default_outline}; border-radius: {button_radius}px; }}
+        {root_selector} QLabel#DeskNodePreviewContextMenuItem {{ {font_qss(studio, settings, 'button', 'Segoe UI') } color: {accent}; padding: 5px 8px; }}
+        {root_selector} QFrame#DeskNodePreviewStatusbar {{ background: {status}; border-top: {default_width}px {outline_style} {disabled_outline}; }}
+        {root_selector} QLabel#DeskNodePreviewStatusText {{ {font_qss(studio, settings, 'status', 'Segoe UI') } }}
+        {root_selector} QLabel#DeskNodePreviewStatusState {{ {font_qss(studio, settings, 'status', 'Segoe UI') } color: {glow_on}; }}
+        {root_selector} QLabel#DeskNodePreviewStatusDivider {{ {font_qss(studio, settings, 'status', 'Segoe UI') } color: {disabled_outline}; padding: 0 4px; }}
     """
 
 

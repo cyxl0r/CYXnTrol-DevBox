@@ -15,10 +15,11 @@ OUTLINE_STYLES = (
     "keine",
 )
 
+
 COLOR_DEFAULTS = {
-    "page_background_rgba": "02080c58",
-    "panel_rgba": "030a0eaa",
-    "input_rgba": "01070bcd",
+    "page_background_rgba": "02080cff",
+    "panel_rgba": "030a0eff",
+    "input_rgba": "01070bff",
     "button_rgba": "0082a0aa",
     "button_hover_rgba": "00a5becd",
     "button_pressed_rgba": "006e86dd",
@@ -30,12 +31,15 @@ COLOR_DEFAULTS = {
     "outline_running_rgba": "ff5d6df5",
     "outline_running_hover_rgba": "ffabb4fa",
     "outline_disabled_rgba": "2c3e4696",
-    "status_rgba": "00000091",
-    "log_rgba": "000000b2",
-    "path_rgba": "00000096",
-    "glow_on_rgba": "00e4ffff",
-    "glow_off_rgba": "2c3e4696",
-    "non_off_rgba": "00000000",
+    "status_rgba": "000000ff",
+    "log_rgba": "000000ff",
+    "path_rgba": "000000ff",
+    "structure_node_rgba": "000000ff",
+    "structure_node_selected_rgba": "00a5becd",
+    "structure_connector_rgba": "23ead7ff",
+    "glow_on_rgba": "23ea84ff",
+    "glow_off_rgba": "ea2380ff",
+    "non_off_rgba": "23ead7ff",
 }
 
 FONT_ROLES = (

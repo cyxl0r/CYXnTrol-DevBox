@@ -28,35 +28,89 @@ from subscripts.main_gui_desknode_ux_widgets import build_rgba_input
 FONT_LABELS = {
     "headline": "Große Überschrift",
     "section": "Bereichsüberschrift",
-    "body": "Standardtext",
+    "body": "Standard- und Dialogtext",
     "button": "Schaltflächentext",
-    "input": "Eingabefeldtext",
-    "status": "Statusmeldung",
+    "input": "Eingabe- und Auswahltext",
+    "status": "Status- und Hinweistext",
     "log": "Protokolltext",
 }
 
 COLOR_LABELS = {
     "page_background_rgba": "Seitenhintergrund",
-    "panel_rgba": "Bereichsfläche",
-    "input_rgba": "Eingabefeld",
-    "button_rgba": "Schaltfläche",
+    "panel_rgba": "Bereichs-, Dialog- und Popupfläche",
+    "input_rgba": "Eingabe- und Auswahlfläche",
+    "status_rgba": "Status- und Hinweisfläche",
+    "log_rgba": "Protokollfläche",
+    "path_rgba": "Pfad- und Wertefläche",
+    "structure_node_rgba": "Glied – Standardfläche",
+    "structure_node_selected_rgba": "Glied – ausgewählte Fläche",
+    "structure_connector_rgba": "Glied – Verbindung und Akzent",
+    "button_rgba": "Primäre Schaltfläche",
     "button_hover_rgba": "Schaltfläche bei Mauskontakt",
     "button_pressed_rgba": "Schaltfläche gedrückt",
-    "button_running_rgba": "Prozess läuft",
-    "button_running_hover_rgba": "Prozess läuft bei Mauskontakt",
+    "button_running_rgba": "Aktiver Prozess",
+    "button_running_hover_rgba": "Aktiver Prozess bei Mauskontakt",
     "button_disabled_rgba": "Deaktivierte Schaltfläche",
     "outline_default_rgba": "Standardkontur",
-    "outline_hover_rgba": "Kontur bei Mauskontakt",
-    "outline_running_rgba": "Kontur Prozess läuft",
-    "outline_running_hover_rgba": "Kontur Prozess läuft bei Mauskontakt",
+    "outline_hover_rgba": "Kontur bei Fokus und Mauskontakt",
+    "outline_running_rgba": "Kontur aktiver Prozess",
+    "outline_running_hover_rgba": "Kontur aktiver Prozess bei Mauskontakt",
     "outline_disabled_rgba": "Deaktivierte Kontur",
-    "status_rgba": "Statusfläche",
-    "log_rgba": "Protokollhintergrund",
-    "path_rgba": "Pfadhintergrund",
-    "glow_on_rgba": "Glow-on",
-    "glow_off_rgba": "Glow-off",
-    "non_off_rgba": "Non-off",
+    "glow_on_rgba": "Gerätesymbol eingeschaltet",
+    "glow_off_rgba": "Gerätesymbol ausgeschaltet",
+    "non_off_rgba": "Akzent- und Informationsfarbe",
 }
+
+COLOR_GROUPS = (
+    (
+        "Grundflächen",
+        (
+            "page_background_rgba",
+            "panel_rgba",
+            "input_rgba",
+            "status_rgba",
+            "log_rgba",
+            "path_rgba",
+        ),
+    ),
+    (
+        "Schaltflächen und Prozesse",
+        (
+            "button_rgba",
+            "button_hover_rgba",
+            "button_pressed_rgba",
+            "button_running_rgba",
+            "button_running_hover_rgba",
+            "button_disabled_rgba",
+        ),
+    ),
+    (
+        "Strukturglieder",
+        (
+            "structure_node_rgba",
+            "structure_node_selected_rgba",
+            "structure_connector_rgba",
+        ),
+    ),
+    (
+        "Konturen",
+        (
+            "outline_default_rgba",
+            "outline_hover_rgba",
+            "outline_running_rgba",
+            "outline_running_hover_rgba",
+            "outline_disabled_rgba",
+        ),
+    ),
+    (
+        "Geräte und Akzente",
+        (
+            "glow_on_rgba",
+            "glow_off_rgba",
+            "non_off_rgba",
+        ),
+    ),
+)
 
 
 def build_editor(view) -> QScrollArea:
@@ -68,9 +122,9 @@ def build_editor(view) -> QScrollArea:
     layout.setContentsMargins(12, 12, 12, 12)
     tabs = QTabWidget()
     tabs.setObjectName("DeskNodeUxTabs")
-    tabs.addTab(build_color_tab(view), "Farben")
+    tabs.addTab(build_color_tab(view), "Flächen und Zustände")
     tabs.addTab(build_font_tab(view), "Schrift")
-    tabs.addTab(build_shape_tab(view), "Formen und Konturen")
+    tabs.addTab(build_shape_tab(view), "Form und Konturen")
     layout.addWidget(tabs)
     scroll.setWidget(container)
     return scroll
@@ -78,18 +132,42 @@ def build_editor(view) -> QScrollArea:
 
 def build_color_tab(view) -> QWidget:
     tab = QWidget()
-    form = QFormLayout(tab)
-    form.setContentsMargins(16, 16, 16, 16)
-    form.setHorizontalSpacing(18)
-    form.setVerticalSpacing(10)
+    layout = QVBoxLayout(tab)
+    layout.setContentsMargins(16, 16, 16, 16)
+    layout.setSpacing(12)
 
-    for key, label in COLOR_LABELS.items():
-        editor, field = build_rgba_input(
-            str(DEFAULT_SETTINGS[key]),
-            view.update_preview,
-        )
-        view.color_inputs[key] = field
-        form.addRow(QLabel(label), editor)
+    hint = QLabel(
+        "Diese vorhandenen Rollen gelten gemeinsam für Haupt-GUI, "
+        "Geräteeditor, Credential-Setup, Menüs und künftige "
+        "deskNode-Dialoge. Farbe und Deckkraft werden gemeinsam "
+        "gespeichert; das Karomuster in den Farbkacheln macht "
+        "eingestellte Transparenz sichtbar. Strukturglieder nutzen "
+        "zusätzlich die vorhandene Standard- und Fokus-Kontur, die "
+        "Schaltflächen-Rundung sowie Standard- und Dialogtext."
+    )
+    hint.setObjectName("DeskNodeUxHint")
+    hint.setWordWrap(True)
+    layout.addWidget(hint)
+
+    for group_title, keys in COLOR_GROUPS:
+        group = QGroupBox(group_title)
+        group.setObjectName("DeskNodeUxColorGroup")
+        form = QFormLayout(group)
+        form.setContentsMargins(12, 10, 12, 10)
+        form.setHorizontalSpacing(18)
+        form.setVerticalSpacing(10)
+
+        for key in keys:
+            editor, field = build_rgba_input(
+                str(DEFAULT_SETTINGS[key]),
+                view.update_preview,
+            )
+            view.color_inputs[key] = field
+            form.addRow(QLabel(COLOR_LABELS[key]), editor)
+
+        layout.addWidget(group)
+
+    layout.addStretch(1)
     return tab
 
 
@@ -163,9 +241,9 @@ def build_shape_tab(view) -> QWidget:
     form.setHorizontalSpacing(18)
     form.setVerticalSpacing(12)
     limits = {
-        "panel_radius": ("Eckenradius Bereiche", 0, 64),
+        "panel_radius": ("Eckenradius Dialoge und Bereiche", 0, 64),
         "button_radius": ("Eckenradius Schaltflächen", 0, 64),
-        "input_radius": ("Eckenradius Eingabefelder", 0, 64),
+        "input_radius": ("Eckenradius Eingabe- und Auswahlfelder", 0, 64),
         "outline_default_width": ("Konturstärke Standard", 0, 12),
         "outline_running_width": ("Konturstärke Prozess läuft", 0, 12),
     }

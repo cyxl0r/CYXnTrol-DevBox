@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 
 from subscripts.main_gui_desknode_ux_defaults import normalize_font_path
 
@@ -39,6 +40,23 @@ def scan_project_fonts(studio) -> list[str]:
         )
 
     return sorted(set(paths), key=str.casefold)
+
+
+def font_display_name(relative_path: object) -> str:
+    try:
+        normalized = normalize_font_path(relative_path)
+    except ValueError:
+        normalized = str(relative_path or "")
+
+    file_name = Path(normalized).stem
+    if not file_name:
+        return "Systemstandard"
+
+    label = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", file_name)
+    label = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", " ", label)
+    label = re.sub(r"[_-]+", " ", label)
+    label = re.sub(r"\bVariable Font wght\b", "Variable", label, flags=re.IGNORECASE)
+    return " ".join(label.split())
 
 
 def resolve_font_path(studio, relative_path: object) -> Path | None:

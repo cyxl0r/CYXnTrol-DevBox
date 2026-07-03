@@ -175,6 +175,22 @@ def style_sheet() -> str:
         QLineEdit#DeskNodeUxColorInput { min-height: 28px; background: rgba(0, 0, 0, 165); color: #edf7ff; border: 1px solid rgba(46, 213, 209, 115); border-radius: 6px; padding: 3px 7px; font-family: Consolas, monospace; }
         QLineEdit#DeskNodeUxColorInput[invalid_rgba="true"] { color: #ffc2c7; border: 1px solid rgba(255, 93, 109, 245); }
         QFrame#DeskNodeUxColorPreview { border: 1px solid rgba(228, 248, 255, 180); border-radius: 4px; }
+        QFrame#DeskNodeUxColorPreview:hover { border: 1px solid rgba(119, 255, 247, 245); }
+        QDialog#DeskNodeUxColorDialog { background: #081017; color: #eef8ff; border: 1px solid rgba(46, 213, 209, 170); border-radius: 10px; }
+        QLabel#DeskNodeUxColorDialogTitle { color: #ffffff; font-size: 13pt; font-weight: 800; }
+        QLabel#DeskNodeUxColorDialogHint, QLabel#DeskNodeUxColorDialogAlpha { color: #a8c7d0; }
+        QLabel#DeskNodeUxColorDialogFieldLabel { color: #d9f0f7; font-weight: 700; }
+        QLineEdit#DeskNodeUxColorDialogHex { min-height: 28px; background: #02080c; color: #eef8ff; border: 1px solid rgba(46, 213, 209, 150); border-radius: 6px; padding: 3px 7px; font-family: Consolas, monospace; }
+        QLineEdit#DeskNodeUxColorDialogHex:focus { border-color: rgba(119, 255, 247, 245); }
+        QFrame#DeskNodeUxColorDialogPreview { border: 1px solid rgba(228, 248, 255, 200); border-radius: 5px; }
+        QSlider#DeskNodeUxColorDialogAlphaSlider::groove:horizontal { height: 6px; background: rgba(6, 20, 28, 220); border: 1px solid rgba(46, 213, 209, 120); border-radius: 3px; }
+        QSlider#DeskNodeUxColorDialogAlphaSlider::sub-page:horizontal { background: rgba(0, 130, 160, 205); border-radius: 3px; }
+        QSlider#DeskNodeUxColorDialogAlphaSlider::handle:horizontal { width: 14px; margin: -5px 0; background: rgba(220, 248, 255, 245); border: 1px solid rgba(0, 228, 255, 220); border-radius: 7px; }
+        QSlider#DeskNodeUxColorDialogAlphaSlider::handle:horizontal:hover { background: rgba(255, 255, 255, 255); border-color: rgba(119, 255, 247, 245); }
+        QPushButton#DeskNodeUxColorDialogCancelButton { min-height: 31px; background: rgba(4, 25, 34, 185); color: #ffffff; border: 1px solid rgba(78, 196, 255, 215); border-radius: 7px; padding-left: 12px; padding-right: 12px; }
+        QPushButton#DeskNodeUxColorDialogCancelButton:hover { background: rgba(0, 109, 148, 195); border-color: rgba(142, 238, 255, 245); }
+        QPushButton#DeskNodeUxColorDialogApplyButton { min-height: 31px; background: rgba(0, 130, 160, 205); color: #ffffff; border: 1px solid #00e4ff; border-radius: 7px; padding-left: 12px; padding-right: 12px; font-weight: 800; }
+        QPushButton#DeskNodeUxColorDialogApplyButton:hover { background: rgba(0, 165, 190, 220); border-color: rgba(119, 255, 247, 245); }
         QComboBox#DeskNodeUxFontCombo, QComboBox#DeskNodeUxThemeCombo, QSpinBox#DeskNodeUxNumberInput { min-height: 28px; background: rgba(0, 0, 0, 150); color: #edf7ff; border: 1px solid rgba(46, 213, 209, 120); border-radius: 6px; padding: 3px 7px; }
         QComboBox#DeskNodeUxFontCombo:hover, QComboBox#DeskNodeUxThemeCombo:hover, QSpinBox#DeskNodeUxNumberInput:hover { border-color: rgba(109, 255, 244, 220); }
         QScrollArea#DeskNodeUxScroll { background: rgba(0, 0, 0, 72); border: 1px solid rgba(45, 187, 204, 90); border-radius: 8px; }

@@ -86,6 +86,7 @@ def finish_graphic_items(runtime, setup_result, build_result):
     print(f"Final-Version-5-PNGs: {len(build_result['final_version5_files'])}")
     print(f"Final-Version-6-PNGs: {len(build_result['final_version6_files'])}")
     print(f"Kopierte Masken-SVGs: {len(build_result['copied_mask_svg_files'])}")
+    print(f"Kopierte Tree-Icon-SVGs: {len(build_result['copied_tree_icon_svg_files'])}")
     print(f"Archivierte Final-Dateien: {build_result['archived_final_file_count']}")
     print(f"items.zip Größe:       {build_result['items_archive_size']} Bytes")
     print(f"Final-Vers2-Deckkraft: {runtime.FINAL_VERSION2_OPACITY:.0%}")
@@ -97,7 +98,7 @@ def finish_graphic_items(runtime, setup_result, build_result):
     print("Final-Vers5-Dateiname: symbol_vers5_<record_id>_<symbol>.png")
     print("Final-Vers6-Dateiname: symbol_vers6_<record_id>_<symbol>.png")
     print()
-    print("Bestätigung: Alle Final-Dateien einschließlich der Masken-SVGs wurden mit maximaler DEFLATE-Kompression in items.zip gepackt und als graphic_items.r0b installiert.")
+    print("Bestätigung: Alle Final-Dateien einschließlich der Masken- und Tree-Icon-SVGs wurden mit maximaler DEFLATE-Kompression in items.zip gepackt und als graphic_items.r0b installiert.")
     runtime.remove_directory_until_gone(
         runtime,
         setup_result["temp_path"],

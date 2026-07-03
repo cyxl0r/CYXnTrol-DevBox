@@ -2,6 +2,7 @@ from __future__ import annotations
 import sqlite3
 from collections.abc import Callable
 from PySide6.QtWidgets import (
+    QApplication,
     QComboBox,
     QFrame,
     QHBoxLayout,
@@ -21,9 +22,10 @@ from subscripts.main_gui_desknode_ux_defaults import (
     DEFAULT_THEME_NAME,
 )
 from subscripts.main_gui_desknode_ux_editor import build_editor
-from subscripts.main_gui_desknode_ux_fonts import scan_project_fonts
+from subscripts.main_gui_desknode_ux_fonts import font_display_name, scan_project_fonts
 from subscripts.main_gui_desknode_ux_preview import build_preview
 from subscripts.main_gui_desknode_ux_storage import save_ux_settings
+from subscripts.main_gui_desknode_ux_font_archive import rebuild_desknode_font_archive
 from subscripts.main_gui_desknode_version_refresh import (
     start_manufacturer_database_refresh,
 )
@@ -108,11 +110,11 @@ class DeskNodeUxDesignView(DeskNodeUxThemeActionsMixin, QWidget):
             combo.clear()
             combo.addItem("Systemstandard", "")
             for path in font_files:
-                combo.addItem(path, path)
+                combo.addItem(font_display_name(path), path)
             index = combo.findData(selected_path)
             if selected_path and index < 0:
                 combo.addItem(
-                    f"Fehlende Schriftdatei: {selected_path}",
+                    f"Fehlende Schriftdatei: {font_display_name(selected_path)}",
                     selected_path,
                 )
                 index = combo.count() - 1
@@ -140,7 +142,7 @@ class DeskNodeUxDesignView(DeskNodeUxThemeActionsMixin, QWidget):
             index = combo.findData(wanted_path)
             if wanted_path and index < 0:
                 combo.addItem(
-                    f"Fehlende Schriftdatei: {wanted_path}",
+                    f"Fehlende Schriftdatei: {font_display_name(wanted_path)}",
                     wanted_path,
                 )
                 index = combo.count() - 1
@@ -237,11 +239,26 @@ class DeskNodeUxDesignView(DeskNodeUxThemeActionsMixin, QWidget):
 
     def save_changes(self) -> None:
         theme_name = self.current_theme_name
+        selected_settings = self.collect_settings()
+
+        if self.save_button is not None:
+            self.save_button.setEnabled(False)
+        self.notice.setText("Schriftarchiv wird vorbereitet …")
+        QApplication.processEvents()
 
         try:
+            def show_archive_progress(message: str) -> None:
+                self.notice.setText(message)
+                QApplication.processEvents()
+
+            archive_result = rebuild_desknode_font_archive(
+                self.studio,
+                selected_settings,
+                progress=show_archive_progress,
+            )
             settings = save_ux_settings(
                 self.studio,
-                self.collect_settings(),
+                selected_settings,
                 theme_name,
             )
         except (OSError, RuntimeError, sqlite3.Error, ValueError) as error:
@@ -251,12 +268,21 @@ class DeskNodeUxDesignView(DeskNodeUxThemeActionsMixin, QWidget):
                 "error",
                 PAGE_KEY,
             )
+            if self.save_button is not None:
+                self.save_button.setEnabled(True)
             return
 
         apply_desknode_ux_settings(self.studio, settings)
         self.update_preview()
+        family_text = (
+            ", ".join(archive_result.family_names)
+            if archive_result.family_names
+            else "nur Systemstandard"
+        )
         self.studio.append_log(
-            f"UX-Theme gespeichert: {theme_name}.",
+            f"UX-Theme gespeichert: {theme_name}. "
+            f"Schriftarchiv aktualisiert: {family_text}; "
+            f"{archive_result.archived_file_count} Datei(en).",
             PAGE_KEY,
         )
         LOGGER.info(
@@ -268,6 +294,9 @@ class DeskNodeUxDesignView(DeskNodeUxThemeActionsMixin, QWidget):
             f"UX-Theme „{theme_name}“ wurde gespeichert. "
             "Herstellerdatenbank wird jetzt aktualisiert …"
         )
+
+        if self.save_button is not None:
+            self.save_button.setEnabled(True)
 
         started = start_manufacturer_database_refresh(
             self.studio,

@@ -120,6 +120,21 @@ def remove_dir_until_gone(folder_path: Path) -> None:
             time.sleep(0.25)
 
 
+def remove_file_until_gone(file_path: Path) -> None:
+    while file_path.exists():
+        try:
+            make_writable(str(file_path))
+            file_path.unlink()
+        except FileNotFoundError:
+            pass
+        except Exception:
+            time.sleep(0.25)
+            continue
+
+        if file_path.exists():
+            time.sleep(0.25)
+
+
 def remove_pycache_dirs(root_path: Path) -> None:
     pycache_dirs = [
         path
@@ -134,6 +149,48 @@ def remove_pycache_dirs(root_path: Path) -> None:
 
     for pycache_dir in pycache_dirs:
         remove_dir_until_gone(pycache_dir)
+
+
+def remove_png_and_graphic_items_files(root_path: Path) -> None:
+    file_paths = [
+        path
+        for path in root_path.rglob("*")
+        if path.is_file()
+    ]
+
+    for file_path in file_paths:
+        if (
+            file_path.suffix.lower() == ".png"
+            or file_path.name.lower() == "graphic_items.r0b"
+        ):
+            try:
+                file_path.unlink()
+            except Exception as exc:
+                print(f"Could not remove file: {file_path}")
+                print(f"Reason: {type(exc).__name__}: {exc}")
+
+
+def replace_large_files(
+    root_path: Path,
+    dummy_file_path: Path,
+    max_file_size: int,
+) -> None:
+    for file_path in root_path.rglob("*"):
+        if not file_path.is_file():
+            continue
+
+        try:
+            file_size = file_path.stat().st_size
+        except Exception:
+            continue
+
+        if file_size > max_file_size:
+            try:
+                file_path.unlink()
+                shutil.copy2(dummy_file_path, file_path)
+            except Exception as exc:
+                print(f"Could not replace large file: {file_path}")
+                print(f"Reason: {type(exc).__name__}: {exc}")
 
 
 def zip_folder(source_folder: Path, zip_file_path: Path) -> None:
@@ -183,6 +240,8 @@ shutil.copytree(
 
 remove_pycache_dirs(rootfiles_path)
 
+remove_png_and_graphic_items_files(rootfiles_path)
+
 dummy_file_path = temp_path / "dummy.file"
 dummy_file_path.write_text(
     "dummy",
@@ -191,22 +250,31 @@ dummy_file_path.write_text(
 
 max_file_size = 2 * 1024 * 1024
 
-for file_path in rootfiles_path.rglob("*"):
-    if not file_path.is_file():
-        continue
+replace_large_files(
+    root_path=rootfiles_path,
+    dummy_file_path=dummy_file_path,
+    max_file_size=max_file_size,
+)
 
-    try:
-        file_size = file_path.stat().st_size
-    except Exception:
-        continue
+devbox_bat_path = (
+    rootfiles_path
+    / "resources"
+    / "applications"
+    / "devbox"
+    / "devbox.bat"
+)
 
-    if file_size > max_file_size:
-        try:
-            file_path.unlink()
-            shutil.copy2(dummy_file_path, file_path)
-        except Exception as exc:
-            print(f"Could not replace large file: {file_path}")
-            print(f"Reason: {type(exc).__name__}: {exc}")
+devbox_exe_path = (
+    rootfiles_path
+    / "resources"
+    / "applications"
+    / "devbox"
+    / "devbox.exe"
+)
+
+remove_file_until_gone(devbox_bat_path)
+
+remove_file_until_gone(devbox_exe_path)
 
 zip_file_path = temp_path / "zip.file"
 

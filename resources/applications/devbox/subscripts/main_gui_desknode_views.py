@@ -21,6 +21,7 @@ def build_desknode_execution_view(
     start_process: Callable,
     open_ux_design: Callable[[], None],
     open_symbol_management: Callable[[], None],
+    open_repository: Callable[[], None],
 ) -> QWidget:
     """Build the regular deskNode execution surface."""
     page = QWidget()
@@ -92,6 +93,14 @@ def build_desknode_execution_view(
         lambda _checked=False: open_symbol_management()
     )
     button_row.addWidget(symbol_management_button)
+
+    repository_button = QPushButton("Repository")
+    repository_button.setObjectName("DeskNodeSymbolManagementButton")
+    repository_button.setMinimumWidth(160)
+    repository_button.clicked.connect(
+        lambda _checked=False: open_repository()
+    )
+    button_row.addWidget(repository_button)
 
     button_row.addStretch(1)
     layout.addLayout(button_row)

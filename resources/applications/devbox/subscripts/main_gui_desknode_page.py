@@ -14,6 +14,7 @@ from subscripts.main_gui_desknode_symbol_management import (
     build_desknode_symbol_management_view,
 )
 from subscripts.main_gui_desknode_views import build_desknode_execution_view
+from subscripts.main_gui_desknode_repository import build_desknode_repository_view
 from subscripts.main_gui_devbox_log import get_devbox_logger
 
 
@@ -38,12 +39,17 @@ def build_desknode_page(studio) -> QWidget:
         start_process=start_desknode_process,
         open_ux_design=lambda: open_ux_design_view(),
         open_symbol_management=lambda: open_symbol_management_view(),
+        open_repository=lambda: open_repository_view(),
     )
     ux_design_view = build_desknode_ux_design_view(
         studio=studio,
         return_to_execution=lambda: stack.setCurrentWidget(execution_view),
     )
     symbol_management_view = build_desknode_symbol_management_view(
+        studio=studio,
+        return_to_execution=lambda: stack.setCurrentWidget(execution_view),
+    )
+    repository_view = build_desknode_repository_view(
         studio=studio,
         return_to_execution=lambda: stack.setCurrentWidget(execution_view),
     )
@@ -60,12 +66,17 @@ def build_desknode_page(studio) -> QWidget:
 
         stack.setCurrentWidget(symbol_management_view)
 
+    def open_repository_view() -> None:
+        stack.setCurrentWidget(repository_view)
+
     stack.addWidget(execution_view)
     stack.addWidget(ux_design_view)
     stack.addWidget(symbol_management_view)
+    stack.addWidget(repository_view)
     studio.desknode_execution_view = execution_view
     studio.desknode_ux_design_view = ux_design_view
     studio.desknode_symbol_management_view = symbol_management_view
+    studio.desknode_repository_view = repository_view
 
     def initialize_ux_profile() -> None:
         try:

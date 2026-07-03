@@ -135,6 +135,11 @@ def build_graphic_items(runtime, setup_result):
         runtime.masks_svg_path,
         runtime.final_path,
     )
+    copied_tree_icon_svg_files = runtime.copy_tree_icon_svg_files_to_final(
+        runtime,
+        setup_result["project_root_path"],
+        runtime.final_path,
+    )
     items_archive_path = setup_result["temp_path"] / "items.zip"
     (
         archived_final_file_count,
@@ -171,6 +176,7 @@ def build_graphic_items(runtime, setup_result):
         "final_version5_files": final_version5_files,
         "final_version6_files": final_version6_files,
         "copied_mask_svg_files": copied_mask_svg_files,
+        "copied_tree_icon_svg_files": copied_tree_icon_svg_files,
         "items_archive_path": items_archive_path,
         "archived_final_file_count": archived_final_file_count,
         "items_archive_size": items_archive_size,
